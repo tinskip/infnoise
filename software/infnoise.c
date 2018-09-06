@@ -79,13 +79,11 @@ bool outputBytes(uint8_t *bytes, uint32_t length, uint32_t entropy, bool writeDe
             *message = "Unable to write output from Infinite Noise Multiplier to random(4)";
             return false;
         }
-#endif
-#if defined(__APPLE__)
+#elif defined(__APPLE__)
         *message = "macOS doesn't support writes to entropy pool";
         entropy = 0; // suppress warning
         return false;
-#endif
-#ifdef LINUX
+#elif LINUX
         inmWaitForPoolToHaveRoom();
         inmWriteEntropyToPool(bytes, length, entropy);
 #endif
@@ -240,18 +238,15 @@ int main(int argc, char **argv) {
 #ifdef LINUX
         inmWriteEntropyStart(BUFLEN / 8u, opts.debug); // TODO: create method in libinfnoise.h for this?
         // also TODO: check superUser in this mode (it will fail silently if not :-/)
-#endif
-#if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || defined(__FreeBSD__)
         int devRandomFD = open("/dev/random", O_WRONLY);
         if (devRandomFD < 0) {
             fprintf(stderr, "Unable to open /dev/random\n");
             exit(1);
         }
         close(devRandomFD);
-#endif
-#if defined(__APPLE__)
-        message = "dev/random not supported on macOS";
-        fprintf(stderr, "Error: %s\n", context.message);
+#elif defined(__APPLE__)
+        fprintf(stderr, "Error: %s\n", "dev/random not supported on macOS");
         return 1;
 #endif
     }

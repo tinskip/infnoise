@@ -258,8 +258,7 @@ bool initializeUSB(struct ftdi_context *ftdic, char **message, char *serial) {
                 } else {
 #ifdef LINUX
                     *message = "Can't open Infinite Noise Multiplier.";
-#endif
-#if defined(__APPLE__)
+#elif defined(__APPLE__)
 
                     *message = "Can't open Infinite Noise Multiplier. sudo kextunload -b com.FTDI.driver.FTDIUSBSerialDriver ? sudo kextunload -b  com.apple.driver.AppleUSBFTDI ?";
 #endif
